@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body, div, p, a, ul, li, ol, dl, dt, dd, span, em, i { margin: 0; padding: 0; }
+        body { background: #444; }
+        em, i { font-style: normal; }
+        p { counter-increment: section; padding: 0 10px;}
+        p:hover {background: #000;}
+        ::selection {background:#a0a; color:#fff;}
+        .wrapper { background: #444; }
+        .box { margin-left: 3em; border-left: 1px solid #fff; padding: 5px; background: #333; }
+        .code_box { font-size: 14px; font-style: normal; color: #fff; line-height: 1.4em; font-family: Consolas, Mono, Monaco, Sans, Source, Code, Pro, Menlo, monospace; }
+        p::before { content: counter(section); color: #ef0; position: absolute; left: 0; display: inline-block; text-align: right; padding: 0 15px 0 5px; border-right: 1px solid #aaa; }
+        .slide_row { pointer-events: none; }
+        .slide_row::after { content: 'v'; position: absolute; left: 0; color: #6ef; font-size: 12px; pointer-events: auto; }
+        .slide_row.hide:after { content: '>'; color: #f09; }
+        .slide_hide { transform: scale(0); position: absolute; }
+        .slide { padding-left: 2.4em; }
+        em { color: #ffd; }
+        i {}
+        .string { color: #3d3; }
+        .number { color: #f90; }
+        .sys_str { color: #f0f; }
+        .bol { color: #0cf; }
+        .debug_panel { position: fixed;  top: 20px; font-size: 12px; right: 20px; text-align: right;}
+        .debug_box { display: none; width: 100px;  height: 150px; margin-top: 10px; padding: 10px; background: #fff; border: 1px solid #9ff; text-align: left;}
+        .debug_box.show { display: block; }
+        .debug_box label { margin-bottom: 3px; display: inline-block; }
+        .debug_box input { width: 30px; border: none; background: #ddd; }
+        .btn{display: inline-block; padding: 3px 5px; margin-right: 3px; color: #333; border: 1px solid #ccc; border-radius: 3px; text-decoration: none; background: #fff;}
+        .btn:hover{color: #09f; border-color: #09f;}
+    </style>
+    <style class="js_css_box"></style>
+    <style class="J_init_style"></style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="box">
+            <div class="code_box" id="code_box">
+            </div>
+        </div>
+    </div>
+    <div class="debug_panel">
+        <a id="goTop" href="javascript:;" class="btn go_top">top</a>
+        <a id="tools" href="javascript:;" class="btn tools">tools</a>
+        <div class="debug_box">
+            <label>行号:<input class="J_hasNumber" type="checkbox"></label><br>
+            <label>行高: <input class="J_lineheight" type="number" step="0.1">em</label><br>
+            <label>字号: <input class="J_fontsize" type="number">px</label><br><br><br>
+            <a href="javascript:;" class="J_reset btn">初始化</a>
+            <a href="javascript:;" class="J_submit btn">确认</a>
+        </div>
+    </div>
+</body>
+<script src="http://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript">
+    var debug_data = { data: { index: 1, code: 'c_1', ext: { index: 12, list: [{ index: 1, a: 123, b: 234, ext: { a: 234, dddll: 234567 }, xt: { a: 234, dddll: 234567 }, et: { a: 234, dddll: 234567 } }, { index: 2, a: 123, b: 234, ext: { a: 234, dddll: 234567} }, { index: 3, a: 123, b: 234, ext: { a: 234, dddll: 234567 } }, { index: 4, a: 123, b: 234, ext: { a: 234, dddll: 234567 } }], arr: [1, 2, 3, 4, 5, 6, 7], eerr: 'sdsdsdsdsdsdsdsdsdsdsdsdsds', isOut: false, isA: true, sub: null, hehe: undefined, no:'', shit: 'shit\'', callback: function() {} }, } };
+    var json2html = {
+        tags: {
+            json_s: '{</p>',
+            json_e: '<p>}',
+            arr_s: '[',
+            arr_e: ']</p>',
+            normal_s: '<p>',
+            normal_e: '</p>',
+            slidebox_s: '<div class="slide J_slide">',
+            slidebox_e: '</div>',
+            key_s: '<em>',
+            key_e: '</em>',
+            val_s: '<i class="',
+            val_m: '">',
+            val_e: '</i>',
+            br: '<br>',
+            slidep_s: '<p class="slide_row">'
+        },
+        init: function(jsonData, codeWrapper, rowBox) {
+            if (jsonData instanceof Object) {
+                var html = '<p class="slide_row">' + json2html.delwithJson(jsonData);
+                html = html.replace(/\}\s*\{/g, '}, {')
+                    .replace(/,\s*\]/g, ']')
+                    .replace(/<p>(\},\s*\{)/g, '<p class="slide_row">$1')
+                    .replace(/<p\sclass\=\"slide\_row\">([^\p\{\}\[]+\[[^\{])/g, '<p>$1');
+                var lineNumberWidth = ($(html).find('p').length + '').length * 10;
+                $('.js_css_box').html([
+                    'p::before{width: ' + lineNumberWidth + 'px;}',
+                    '.box{margin-left: ' + (lineNumberWidth + 20) + 'px;}',
+                    '.slide_row::after{margin-left: ' + (lineNumberWidth + 10) + 'px;}'
+                ].join(''));
+                json2html.showHtml(html, codeWrapper);
+            } else if (jsonData instanceof Array) {
+            } else {
+                return false;
+            }
+        },
+        delwithJson: function(data, fr) {
+            var str = json2html.tags.json_s + json2html.tags.slidebox_s;
+            str += json2html.loopData(data, 'json');
+            str += json2html.tags.slidebox_e + (fr == 'arr' ? '<p>}' : json2html.tags.json_e);
+            return str;
+        },
+        delwithArr: function(data, fr) {
+            var str = json2html.tags.arr_s;
+            str += json2html.loopData(data, 'arr');
+            str += json2html.tags.arr_e;
+            return str;
+        },
+        loopData: function(data, fr) {
+            var str = '';
+            var className = '';
+            for (var i in data) {
+                var ty = typeof(data[i]);
+                var keyStr = '';
+                if (fr === 'json') {
+                    keyStr = [json2html.tags.key_s, i + ': ', json2html.tags.key_e].join('');
+                }
+                var valData = data[i];
+                var prefix = keyStr;
+                var needValStr = true;
+                var loopStr = '';
+                switch (ty) {
+                    case 'string':
+                        className = 'string';
+                        valData = '"' + valData.replace(/\"/g, '\"').replace(/\'/, '\'') + '"';
+                        break;
+                    case 'number':
+                        className = 'number';
+                        break;
+                    case 'undefined':
+                        className = 'sys_str';
+                        valData += '';
+                        break;
+                    case 'boolean':
+                        className = 'bol';
+                        break;
+                    case 'object':
+                        if (data[i] === null) {
+                            className = 'sys_str';
+                            valData += '';
+                        } else if (data[i].constructor === Object) {
+                            needValStr = false;
+                            loopStr += (fr == 'arr' ? '' : json2html.tags.slidep_s) + prefix +
+                                json2html.delwithJson(data[i], 'json') + ', ';
+                        } else if (data[i].constructor === Array) {
+                            needValStr = false;
+                            loopStr += json2html.tags.slidep_s + prefix + json2html.delwithArr(data[i], 'arr');
+                        }
+                        break;
+                    case 'function':
+                        className = 'sys_str';
+                        valData = '(function-data)'
+                        break;
+                    default:
+                        className = '';
+                }
+                if (needValStr) {
+                    loopStr = [
+                        prefix,
+                        json2html.tags.val_s,
+                        className,
+                        json2html.tags.val_m,
+                        valData,
+                        json2html.tags.val_e
+                    ].join('');
+                    loopStr = fr !== 'arr' ?
+                        (json2html.tags.normal_s + loopStr + json2html.tags.normal_e) :
+                        loopStr + ', ';
+                }
+                // 每个元素添加','
+                str += loopStr.replace(/<\/p>$/, ', </p>');
+                // str += loopStr;
+            }
+            // 去掉最后一个元素的','
+            return str.replace(/,\s*(<\/p>)?$/, '$1');
+        },
+        showHtml: function(html, wrapper) {
+            if (wrapper) {
+                document.getElementById(wrapper).innerHTML = html || '无数据';
+            }
+        },
+    };
+    (function(debug_data){
+        function bind() {
+            $('.slide_row').on('click', function() {
+                $(this).next('.J_slide').toggleClass('slide_hide');
+                $(this).toggleClass('hide');
+            })
+            $('#tools').on('click', function() {
+                $('.debug_box').toggleClass('show');
+            });
+            $('#goTop').on('click', function() {
+                window.scrollTo(0,0);
+            })
+            $('.J_submit').on('click', function() {
+                var hasNumber = $('.J_hasNumber')[0].checked;
+                var lineheight = $('.J_lineheight').val();
+                var fontsize = $('.J_fontsize').val();
+                window.localStorage.hasNumber = hasNumber;
+                window.localStorage.lineheight = lineheight;
+                window.localStorage.fontsize = fontsize;
+                window.location.reload();
+            });
+            $('.J_reset').on('click', function() {
+                $('.J_hasNumber')[0].checked = false;
+                $('.J_lineheight').val('');
+                $('.J_fontsize').val('');
+                window.localStorage.hasNumber = true;
+                window.localStorage.lineheight = '';
+                window.localStorage.fontsize = '';
+                window.location.reload();
+            });
+        }
+        function changeStyle() {
+            var cssStr = [];
+            cssStr.push('.code_box{font-size: ' + window.localStorage.fontsize + 'px;');
+            cssStr.push('line-height: ' + window.localStorage.lineheight + 'em;}');
+            if (window.localStorage.hasNumber == 'false' || window.localStorage.hasNumber == false) {
+                var lineNumberWidth = 0;
+                cssStr.push('p::before{display: none;}');
+                cssStr.push('.box{margin-left: ' + (lineNumberWidth + 20) + 'px;}');
+                cssStr.push('.slide_row::after{margin-left: ' + (lineNumberWidth + 10) + 'px;}');
+            }
+            $('.J_init_style').html(cssStr.join(''));
+        }
+        function init() {
+            json2html.init(debug_data, 'code_box', 'left');
+            if (window.localStorage) {
+                $('.J_hasNumber')[0].checked = window.localStorage.hasNumber == 'false' ? false : true;
+                $('.J_lineheight').val(window.localStorage.lineheight || '1.4');
+                $('.J_fontsize').val(window.localStorage.fontsize || '14');
+                changeStyle();
+            }
+            bind();
+        }
+        init();
+    })(debug_data);
+    console.log(debug_data);
+</script>
+</html>
