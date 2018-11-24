@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        video,canvas{
+            display: inline-block;
+            margin-right: 30px;
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <video src="" id="video" width="1920" height="1080"></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <script>
+        var video = document.getElementById('video');
+        var can = document.getElementById('canvas');
+        var ctx = can.getContext('2d');
+
+        function doCam() {
+            if (navigator.getUserMedia) {
+                navigator.getUserMedia({video: true}, showVideo, errorFn);
+            }
+        }
+
+        function showVideo(stream) {
+            if (stream) {
+                console.log(1, stream);
+                // video.src = stream;
+                video.src=window.webkitURL.createObjectURL(stream);
+                video.play();
+            } else {
+                return false;
+            }
+        }
+
+        function errorFn(err) {
+            console.log(0, err);
+        }
+
+        doCam();
+    </script>
+</body>
+</html>

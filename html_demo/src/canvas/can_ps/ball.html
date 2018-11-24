@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background: #333;
+            background: url(./img/6.jpg) no-repeat 0 0;
+            background-size: cover;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="can" width=0 height=0></canvas>
+    <script>
+        var ballsNum = 20;
+        window.onload = function() {
+
+            var can = document.getElementById('can');
+            can.width = document.body.offsetWidth;
+            can.height = document.body.offsetHeight;
+            var ctx = can.getContext('2d');
+            var ballR = Math.floor(can.height / 15);
+            ctx.shadowColor = 'rgba(0,0,0,.3)';
+            ctx.shadowOffsetX = ballR / 5;
+            ctx.shadowOffsetY = ballR / 5;
+            // ctx.shadowBlur = ballR / 10 > 5 ? ballR / 10 : 5;
+            ctx.shadowBlur = 16;
+
+            var aObj = randomBall(ballsNum);
+            var raf = window.requestAnimationFrame(loop);
+
+            function loop() {
+                ctx.clearRect(0, 0, can.width, can.height);
+                for (var i = 0, l = aObj.length; i < l; i++) {
+                    fnChange(aObj[i]);
+                    checkPeng(aObj, i);
+                }
+                if (raf) {
+                    raf = window.requestAnimationFrame(loop);
+                }
+            }
+
+            //  改变圆心坐标
+            function fnChange(obj) {
+                drawArc(obj);
+                obj.x += obj.sx * 10 / 4;
+                obj.y += obj.sy * 5 / 4;
+
+                if (obj.x >= can.width - ballR) {
+                    obj.x = can.width - ballR;
+                    obj.sx = -1 * obj.sx;
+                } else if (obj.x <= ballR) {
+                    obj.x = ballR;
+                    obj.sx = -1 * obj.sx;
+                }
+                if (obj.y >= can.height - ballR) {
+                    obj.y = can.height - ballR;
+                    obj.sy = -1 * obj.sy;
+                } else if (obj.y <= ballR) {
+                    obj.y = ballR;
+                    obj.sy = -1 * obj.sy;
+                }
+            }
+            //画圆
+            function drawArc(obj) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(obj.x % can.width, obj.y % can.height, ballR, 0, 2 * Math.PI);
+                ctx.closePath();
+
+                var grd = ctx.createRadialGradient(obj.x - ballR * 3 / 10, obj.y - ballR * 4 / 10, ballR / 8, obj.x - ballR * 4 / 10, obj.y - ballR * 4 / 10, ballR * 16 / 10);
+                grd.addColorStop(0, "rgba(255,255,255,1)");
+                grd.addColorStop(1, obj.scolor);
+                ctx.fillStyle = grd;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function randomBall(num) {
+                var barr = [];
+                var ball;
+                for (var i = 0; i < num || 0; i++) {
+                    ball = {};
+                    ball.x = Math.random() * (can.width - ballR * 2) + ballR;
+                    ball.y = Math.random() * (can.height - ballR * 2) + ballR;
+                    ball.sx = Math.random() * 6 - 6 / 2;
+                    ball.sy = Math.random() * 6 - 6 / 2;
+                    var scr = Math.round(Math.random() * 200 + 50);
+                    var scg;
+                    var scb;
+                    if (scr > 200) {
+                        if (Math.random() > 1) {
+                            scg = Math.round(Math.random() * 150 + 50);
+                            scb = Math.round(Math.random() * 200 + 50);
+                        } else {
+                            scb = Math.round(Math.random() * 150 + 50);
+                            scg = Math.round(Math.random() * 200 + 50);
+                        }
+                    } else {
+                        scg = Math.round(Math.random() * 200 + 50);
+                        scb = Math.round(Math.random() * 200 + 50);
+                    }
+                    ball.scolor = 'rgba(' + [scr, scg, scb, 1].join(',') + ')';
+                    barr.push(ball);
+                }
+                return barr;
+            }
+
+            //碰撞检测
+            function checkPeng(arr, i) {
+                var j, len;
+
+                for (j = 0, len = arr.length; j < len; j++) {
+                    if (i === j) {
+                        continue;
+                    }
+                    var ca = {
+                        x: arr[i].x - arr[j].x,
+                        y: arr[i].y - arr[j].y
+                    }
+                    var z = Math.sqrt(Math.pow(ca.x, 2) + Math.pow(ca.y, 2));
+                    var cha = z - ballR * 2;
+                    if (cha <= 0) {
+                        if (arr[i].x < arr[j].x) {
+                            arr[i].x += cha;
+                        } else {
+                            arr[i].x += -cha;
+                        }
+                        if (arr[i].y < arr[j].y) {
+                            arr[i].y += cha;
+                        } else {
+                            arr[i].y += -cha;
+                        }
+                        //arr[i].sy = -1*arr[i].sy;
+                        var iTY = arr[i].sy;
+                        arr[i].sy = 1 * arr[j].sy;
+                        arr[j].sy = iTY;
+                        //arr[i].sx = -1*arr[i].sx;
+                        var iTX = arr[i].sx;
+                        arr[i].sx = 1 * arr[j].sx;
+                        arr[j].sx = iTX;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

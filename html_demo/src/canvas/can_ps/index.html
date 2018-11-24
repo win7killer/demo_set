@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>demo_list</title>
+</head>
+<body>
+    <ul class="list_box">
+
+    </ul>
+    <script>
+        function randomBall(num) {
+            var arr = [];
+            var ball = {};
+            for (var i = 0; i < num || 0; i++) {
+                ball.x = Math.random() * (can.width - 50 * 2) + 50;
+                ball.y = Math.random() * (can.height - 50 * 2) + 50;
+                ball.sx = Math.random() * 6 - 6/2;
+                ball.sy = Math.random() * 6 - 6/2;
+                ball.color = 'rgba(' + [
+                    Math.round(Math.random() * 150 + 100),
+                    Math.round(Math.random() * 150 + 100),
+                    Math.round(Math.random() * 150 + 100),
+                    1
+                ].join(',') + ')';
+                arr.push(ball);
+                ball = {};
+            }
+        }
+
+
+
+
+window.onload = function() {
+    var can = document.getElementById('can');
+    var ctx = can.getContext('2d'),
+        timer = null,
+        aObj = [
+            {x:100, y:100, sx:1, sy:1, color:'rgba(0,255,255,0.8)'},
+            {x:200, y:200, sx:-0.5, sy:-1, color:'#9f6'},
+            {x:200, y:500, sx:-1, sy:1, color:'#6af'},
+            {x:500, y:200, sx:1, sy:-0.5, color:'#6cf'},
+            {x:800, y:100, sx:1, sy:1, color:'red'},
+            {x:500, y:400, sx:-1, sy:-1, color:'#9ff'},
+            {x:400, y:600, sx:-1, sy:1, color:'#f06'},
+            {x:800, y:300, sx:1.5, sy:1, color:'#faa'},
+            {x:300, y:400, sx:-1, sy:-1.5, color:'#f9c'},
+            {x:400, y:200, sx:-1, sy:2, color:'#f09'},
+            {x:150, y:150, sx:1, sy:1, color:'#ff0'},
+            {x:250, y:240, sx:-1, sy:-1.5, color:'#0f9'},
+            {x:250, y:530, sx:-1.5, sy:1, color:'#99f'},
+            {x:550, y:220, sx:2, sy:-1, color:'#90f'},
+            {x:50, y:220, sx:2.3, sy:-1, color:'#09f'},
+            {x:510, y:200, sx:-2, sy:-1, color:'#f90'}
+        ];
+    oCG.shadowColor = 'rgba(0,0,0,.5)';
+    oCG.shadowOffsetX = '10';
+    oCG.shadowOffsetY = '10';
+    oCG.shadowBlur = '10';
+    timer = setInterval(function() {
+        oCG.clearRect(0, 0, 1000, 800);
+        for (var i = 0, l = aObj.length; i < l; i++) {
+            fnChange(aObj[i]);
+            checkPeng(aObj, i);
+        }
+
+    }, 1000 / 60);
+    //  改变圆心坐标
+    function fnChange(obj) {
+        drawArc(obj);
+        obj.x += obj.iDirX * 10 / 4;
+        obj.y += obj.iDirY * 5 / 4;
+
+        if (obj.x >= 1000 - 50) {
+            obj.x = 1000 - 50;
+            obj.iDirX = -1 * obj.iDirX;
+        } else if (obj.x <= 50) {
+            obj.x = 50;
+            obj.iDirX = -1 * obj.iDirX;
+        }
+        if (obj.y >= 800 - 50) {
+            obj.y = 800 - 50;
+            obj.iDirY = -1 * obj.iDirY;
+        } else if (obj.y <= 50) {
+            obj.y = 50;
+            obj.iDirY = -1 * obj.iDirY;
+        }
+    }
+    //画圆
+    function drawArc(obj) {
+        oCG.save();
+        oCG.beginPath();
+        oCG.arc(obj.x % 1000, obj.y % 800, 50, 0, 2 * Math.PI);
+        oCG.closePath();
+        var grd=oCG.createRadialGradient(obj.x -15,obj.y -20,5,obj.x-20,obj.y-20,80);
+        grd.addColorStop(0,"#eee");
+        grd.addColorStop(1, obj.color);
+        oCG.fillStyle=grd;
+        oCG.fill();
+        oCG.restore();
+    }
+    //碰撞检测
+    function checkPeng(arr, i) {
+        var j, len;
+
+        for (j = 0, len = arr.length; j < len; j++) {
+            if (i === j) {
+                continue;
+            }
+            var ca = {
+                x: arr[i].x - arr[j].x,
+                y: arr[i].y - arr[j].y
+            }
+            var z = Math.sqrt(Math.pow(ca.x, 2) + Math.pow(ca.y, 2));
+            var cha = z - 100;
+            if (cha <= 0) {
+                if (arr[i].x < arr[j].x) {
+                    arr[i].x += cha;
+                } else {
+                    arr[i].x += -cha;
+                }
+                if (arr[i].y < arr[j].y) {
+                    arr[i].y += cha;
+                } else {
+                    arr[i].y += -cha;
+                }
+                //arr[i].iDirY = -1*arr[i].iDirY;
+                iTY = arr[i].iDirY;
+                arr[i].iDirY = 1 * arr[j].iDirY;
+                arr[j].iDirY = iTY;
+                //arr[i].iDirX = -1*arr[i].iDirX;
+                iTX = arr[i].iDirX;
+                arr[i].iDirX = 1 * arr[j].iDirX;
+                arr[j].iDirX = iTX;
+            }
+
+        }
+
+    }
+
+}
+    </script>
+</body>
+</html>
+
+aObj = [
+                {x:100, y:100, sx:1, sy:1, color:'rgba(0,255,255,0.8)'},
+                {x:200, y:200, sx:-0.5, sy:-1, color:'#9f6'},
+                {x:200, y:500, sx:-1, sy:1, color:'#6af'},
+                {x:500, y:200, sx:1, sy:-0.5, color:'#6cf'},
+                {x:800, y:100, sx:1, sy:1, color:'red'},
+                {x:500, y:400, sx:-1, sy:-1, color:'#9ff'},
+                {x:400, y:600, sx:-1, sy:1, color:'#f06'},
+                {x:800, y:300, sx:1.5, sy:1, color:'#faa'},
+                {x:300, y:400, sx:-1, sy:-1.5, color:'#f9c'},
+                {x:400, y:200, sx:-1, sy:2, color:'#f09'},
+                {x:150, y:150, sx:1, sy:1, color:'#ff0'},
+                {x:250, y:240, sx:-1, sy:-1.5, color:'#0f9'},
+                {x:250, y:530, sx:-1.5, sy:1, color:'#99f'},
+                {x:550, y:220, sx:2, sy:-1, color:'#90f'},
+                {x:50, y:220, sx:2.3, sy:-1, color:'#09f'},
+                {x:510, y:200, sx:-2, sy:-1, color:'#f90'}
+            ];
+aObj = [
+                {x:100, y:100, sx:1, sy:1, color:'rgba(0,255,255,0.8)'},
+                {x:200, y:200, sx:-0.5, sy:-1, color:'#9f6'},
+                {x:200, y:500, sx:-1, sy:1, color:'#6af'},
+                {x:500, y:200, sx:1, sy:-0.5, color:'#6cf'},
+                {x:800, y:100, sx:1, sy:1, color:'red'},
+                {x:500, y:400, sx:-1, sy:-1, color:'#9ff'},
+                {x:400, y:600, sx:-1, sy:1, color:'#f06'},
+                {x:800, y:300, sx:1.5, sy:1, color:'#faa'},
+                {x:300, y:400, sx:-1, sy:-1.5, color:'#f9c'},
+                {x:400, y:200, sx:-1, sy:2, color:'#f09'},
+                {x:150, y:150, sx:1, sy:1, color:'#ff0'},
+                {x:250, y:240, sx:-1, sy:-1.5, color:'#0f9'},
+                {x:250, y:530, sx:-1.5, sy:1, color:'#99f'},
+                {x:550, y:220, sx:2, sy:-1, color:'#90f'},
+                {x:50, y:220, sx:2.3, sy:-1, color:'#09f'},
+                {x:510, y:200, sx:-2, sy:-1, color:'#f90'}
+            ];

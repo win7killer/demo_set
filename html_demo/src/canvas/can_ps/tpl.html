@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div class="wrapper">
+
+    </div>
+    <script>
+    var tpl = '<{$sdsds}><{$idsajdklsajhdksaj}>';
+    var tagLeft = '<{';
+    var tagRight = '}>';
+    function compile() {
+        var str = tpl;
+        var tagReg = new RegExp(
+            tagLeft.replace(/([\<\>\{\}])/g, '\\$1')
+            + '\(\[\^\>\<\{\}\]\*\)'
+            +  tagRight.replace(/([\<\>\{\}])/g, '\\$1')
+        );
+        var temp = [];
+        while(temp = str.match(tagReg)) {
+            var content = temp[1];
+            str = doReplace(content);
+            console.log(content);
+            console.log(str);
+            // str = str.replace(tagReg, '<-->');
+            //return str;
+        }
+        return str;
+    }
+    compile();
+
+
+    function doReplace(str) {
+        str = str || '';
+        switch(str) {
+            case str.test(/\:.+/):
+                // echo
+
+                break;
+        }
+    }
+    // 完数  6 = 1 + 2 + 3
+    function getPerNums(l) {
+        var st = Date.now();
+        var perNums = [];
+        for (var i=1; i<l; i++) { // loop 1000
+            var per = [];
+            for (var j=1, k=i; j<k; j++) {
+                if (i%j == 0) {
+                    per.push(j);
+                }
+            }
+            var count = 0;
+            for (var m=0, n=per.length; m<n; m++) {
+                count += per[m];
+            }
+            if (count === i) {
+                perNums.push(i);
+            }
+        }
+        console.warn('一共耗时： ', Date.now() - st, ' ms');
+        return perNums;
+    }
+    // 所谓加密
+    function mixCode(str) {
+        str += '';
+        var arr = str.split('');
+        arr.map(function(i, item) {
+            item = Number(item);
+            item += 5;
+            item = item%10;
+        });
+        arr.reverse();
+        arr.splice(1,0,arr.splice(2,1).pop());
+        return arr.join('');
+    }
+    /**
+     * 输出矩阵
+    */
+    function outMix(num) {
+        var num = num || (console.warn('num defaults 3'), 3);
+        var mix = [];
+        for (var i=0,l = num; i<l; i++) {
+            mix.push([]);
+        }
+        var now = 1;
+        var cun=0;
+        for (var x=1, y=1, l=num*num; now <= l; y++, x++) {
+            if (x > num && y > num) {
+                var xx = num;
+                for (var m=xx, n = y - num + 1; now<=l; m--, n++) {
+                    if (n > xx) {
+                        n = n++;
+                        break;
+                    }
+                    mix[m-1][n-1] = now++;
+                }
+            } else {
+                for (var m=y, n = 1; now<=l; m--, n++) {
+                    if (m < 1) {
+                        break;
+                    }
+                    mix[m-1][n-1] = now++;
+                }
+            }
+        }
+        return mix;
+    }
+    // 展示矩阵输出字符串
+    function showMix(num) {
+        var arr = outMix(Number(num));
+        var ss = JSON.stringify(arr);
+        var sss = ss.replace(/\]\,/g, '\]\n').replace(/(\[|\])/g, '');
+        return sss;
+    }
+
+    </script>
+</body>
+</html>
