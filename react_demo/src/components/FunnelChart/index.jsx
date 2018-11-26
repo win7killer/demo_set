@@ -1,6 +1,6 @@
 /**
  * @file: 基于 G2 的漏斗图 React 组件封装
- * @author: swb@meitu.com
+ * @author: win7killer@163.com
  * @description: 基于阿里 G2 封装，参考官网demo修改来的。
  * @relyOn: ['prop-types', '@antv/g2', '@antv/data-set']
  * @props: {
@@ -11,7 +11,7 @@
  *     noDataText： PropTypes.String, [没有数据时的提示，默认为“没有数据”，传 '' 时不展示对应 div] 【CHOICE】[DEFAULT: '没有数据']
  * }
  * @example: <FunnelChart data={mockData} percentStep={2} fixedType="floor" baseNum={undefined} noDataText="no data"></FunnelChart>
- * @version: 0.0.1 | swb@meitu.com | 2018-11-23 // init
+ * @version: 0.0.1 | win7killer@163.com | 2018-11-23 // init
  */
 
 import React, { Component } from 'react';
