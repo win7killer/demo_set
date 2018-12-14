@@ -10,6 +10,8 @@ export default class Tarot extends Component {
         this.can = {};
         this.ctx = {};
         this.imgRes = [];
+        this.tarotCount = 78;
+        this.tarots = [];
         this.refCan = React.createRef();
         this.methods();
     }
@@ -39,30 +41,89 @@ export default class Tarot extends Component {
 
         Promise.all([this.loadImg(imgList[0])]).then(res => {
             this.imgRes = res;
+            this.initTarots();
             this.initAnimate();
+            this.drawLineMark();
         });
     }
-    initAnimate() {
-        let {can, ctx, imgRes} = this;
-        let imgObj = imgRes[0].source || {};
-        let drawParam = [imgObj, 0, 0, imgObj.width, imgObj.height, 0, 0 , imgObj.width / 2, imgObj.height / 2];
-        // ctx.drawImage(...drawParam);
-        for (let i = 0; i < 360; i+= Math.floor(360 / 78)) {
-            canTool.rotate({
-                ctx,
-                deg: i / 180 * Math.PI,
-                callback: () => {
-                    ctx.translate(100, 0);
-                    ctx.drawImage(...drawParam);
-                }
+    drawLineMark() { // 参考线
+        let {can, ctx, imgRes, tarots} = this;
+        ctx.save();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#f90';
+        ctx.beginPath();
+        ctx.moveTo(0, can.height / 2);
+        ctx.lineTo(can.width, can.height / 2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(can.width / 2, 0);
+        ctx.lineTo(can.width / 2, can.height );
+        ctx.stroke();
+    }
+    initTarots() {
+        let {tarotCount, tarots} = this;
+        for (let i = 0; i < tarotCount; i++) {
+            tarots.push({
+                index: i,
+                speedX: Math.round(Math.random() * 100),
+                speedY: Math.round(Math.random() * 200),
+                rotate: Math.round(Math.random() * 360)
             })
         }
     }
+    initAnimate() {
+        let {can, ctx, imgRes, tarots} = this;
+        let imgObj = imgRes[0].source || {};
+
+        // ctx.drawImage(...drawParam);
+
+        // for (let i = 0; i < tarots.length; i++) {
+        //     let {speedX, speedY, rotate} = tarots[i];
+        //     let drawParam = [imgObj, 0, 0, imgObj.width, imgObj.height, 0, 100 , imgObj.width / 2, imgObj.height / 2];
+        //     canTool.rotate({
+        //         ctx,
+        //         deg: rotate / 180 * Math.PI,
+        //         callback: () => {
+        //             ctx.translate(0, 0);
+        //             ctx.drawImage(...drawParam);
+        //         }
+        //     })
+        // }
+
+        canTool.translate(ctx).then(() => {
+            ctx.save();
+            // canTool.rotate({
+            //     ctx,
+            //     deg: 0 / 180 * Math.PI,
+            //     callback: () => {
+            //         ctx.translate(0, -200)
+            //         ctx.drawImage(imgObj, 0, 0, imgObj.width, imgObj.height, 0, 100 , imgObj.width / 2, imgObj.height / 2);
+            //     }
+            // })
+
+
+            ctx.translate(0, 0)
+            // ctx.rotate(30 / 180 * Math.PI)
+            canTool.rotate({
+                ctx,
+                deg: 0 / 180 * Math.PI,
+                callback: () => {
+                    // ctx.translate(0, -200)
+                    ctx.drawImage(imgObj, 0, 0, imgObj.width, imgObj.height, 0, 0 , imgObj.width / 2, imgObj.height / 2);
+                }
+            })
+            // ctx.drawImage(imgObj, 0, 0, imgObj.width, imgObj.height, 0, 100 , imgObj.width , imgObj.height);
+
+
+            ctx.restore();
+        })
+    }
     initCan() {
-        this.can.width = 750;
-        this.can.height = 1334;
-        this.can.style.width = '375px';
-        this.can.style.height = '667px';
+        this.can.width = 2000;
+        this.can.height = 1600;
+        this.can.style.width = '1000px';
+        this.can.style.height = '800px';
 
         this.ctx.fillStyle = '#eee';
         this.ctx.fillRect(0, 0, this.can.width, this.can.height);

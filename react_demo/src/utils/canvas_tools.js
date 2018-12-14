@@ -11,7 +11,24 @@ let tools = {
         callback && callback(ctx);
         ctx.restore();
     },
-    translate() {},
+    rotate1({
+        ctx,
+        deg,
+        callback
+    }) {
+        if (!ctx) throw new Error('ctx is not a context of canvas');
+        ctx.save();
+        ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
+        ctx.rotate(deg);
+        callback && callback(ctx);
+        ctx.restore();
+    },
+    async translate(ctx) {
+        ctx.save();
+        setTimeout(() => {
+            ctx.restore();
+        }, 0)
+    },
     scale() {},
     clip() {},
     radiusRect({
