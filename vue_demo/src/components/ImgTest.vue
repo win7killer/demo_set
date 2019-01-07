@@ -21,8 +21,8 @@ export default {
     },
     mounted() {
         this.audioDom = this.$refs.audio;
-        audioDom.oncanplay = () => {
-            audioDom.play();
+        this.audioDom.oncanplay = () => {
+            this.audioDom.play();
         }
     },
     computed: {
