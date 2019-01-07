@@ -1,6 +1,6 @@
 module.exports = {
     configureWebpack: {
-        devtool: 'source-map'
+        devtool: false
     },
     baseUrl: '//win7killer.github.io/demo_set/vue_demo/dist/',
     // indexPath: '../index.html',
