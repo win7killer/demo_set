@@ -1,7 +1,7 @@
 <template>
 <div class="box">
     <img class="img-dom" :src="src" alt="">
-    <audio autoplay ref="audio" preload="load" :src="audioSrc"></audio>
+    <audio autoplay ref="audio" preload="auto" :src="audioSrc"></audio>
     <a href="javascript:;" @click="playChange">{{getStage}}</a>
 </div>
 </template>
@@ -21,6 +21,7 @@ export default {
     },
     mounted() {
         this.audioDom = this.$refs.audio;
+        this.audioDom.load();
         this.audioDom.oncanplay = () => {
             this.audioDom.play();
         }
