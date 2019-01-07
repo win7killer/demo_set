@@ -72,7 +72,7 @@ export default {
                         // deg: Math.random() * 90,
                         translate: [
                             // m * 101 + 100,
-                            0,0
+                            0, 0
                             // i * 101 + 100
                         ]
                     });
@@ -183,7 +183,7 @@ export default {
             ctx.fillStyle = "rgba(0,0,255,.5)";
             // ctx.translate(20, 100)
             ctx.rotate(45 * Math.PI / 180);
-            ctx.fillRect(-w/2, -h/2, w, h);
+            ctx.fillRect(-w / 2, -h / 2, w, h);
 
             ctx.restore();
 
@@ -198,4 +198,5 @@ export default {
     display: block;
     background: #ccc; // box-shadow: 1px 1px #f90 inset;
 }
+
 </style>

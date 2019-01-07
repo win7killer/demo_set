@@ -1,15 +1,10 @@
 <template>
 <div class="can-box">
- <canvas
-     id="can"
-     width=500
-     height=300
- ></canvas>
+    <canvas id="can" width=500 height=300></canvas>
 </div>
 </template>
 
 <script>
-
 import F2 from '@antv/f2/lib/core';
 import '@antv/f2/lib/geom/line';
 import '@antv/f2/lib/geom/point';
@@ -78,7 +73,10 @@ export default {
         },
         drawText() {
             // 绘制折点文本
-            let {chart, textColor } = this;
+            let {
+                chart,
+                textColor
+            } = this;
             let offset = -5;
             let canvas = chart.get('canvas');
             let group = canvas.addGroup();

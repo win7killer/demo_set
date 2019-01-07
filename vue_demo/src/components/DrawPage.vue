@@ -24,7 +24,7 @@ let list = [{
     y: 150
 }];
 
-function loadImg(obj) {
+function loadImg (obj) {
     return new Promise((resolve, inject) => {
         let img = obj.source = new Image();
         img.onload = () => {
@@ -69,7 +69,10 @@ export default {
             });
         },
         drawMergeIma(res) {
-            let {chartCan, bgImg} = this;
+            let {
+                chartCan,
+                bgImg
+            } = this;
             let mimg = new MergeImg({
                 width: 600,
                 height: 400,
