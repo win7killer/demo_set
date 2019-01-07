@@ -21,6 +21,9 @@ export default {
     },
     mounted() {
         this.audioDom = this.$refs.audio;
+        audioDom.oncanplay = () => {
+            audioDom.play();
+        }
     },
     computed: {
         getStage() {
