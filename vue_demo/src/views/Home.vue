@@ -5,7 +5,8 @@
     <!-- <LineChart></LineChart> -->
     <!-- <DrawPage></DrawPage> -->
     <!-- <WashCard></WashCard> -->
-    <ImgTest/>
+    <!-- <ImgTest/> -->
+    <LangListTest/>
 </div>
 </template>
 
@@ -16,6 +17,7 @@ import LineChart from '@/components/LineChart.vue';
 import DrawPage from '@/components/DrawPage.vue';
 import WashCard from '@/components/WashCard.vue';
 import ImgTest from '@/components/ImgTest.vue';
+import LangListTest from '@/components/LangListTest.1.vue';
 @Component({
     components: {
         HelloWorld,
@@ -23,7 +25,17 @@ import ImgTest from '@/components/ImgTest.vue';
         DrawPage,
         // WashCard,
         ImgTest,
+        LangListTest,
     }
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+    data() {
+        return {
+            a:1
+        }
+    }
+    mounted() {
+        console.log(this);
+    }
+}
 </script>

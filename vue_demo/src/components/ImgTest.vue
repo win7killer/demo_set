@@ -21,10 +21,12 @@ export default {
     },
     mounted() {
         this.audioDom = this.$refs.audio;
-        this.audioDom.load();
+
         this.audioDom.oncanplay = () => {
-            this.audioDom.play();
+            console.log(this.audioDom);
+            try {this.audioDom.play();} catch(err) {console.log(err)}
         }
+        this.audioDom.load();
     },
     computed: {
         getStage() {
